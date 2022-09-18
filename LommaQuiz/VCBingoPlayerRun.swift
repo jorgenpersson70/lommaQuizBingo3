@@ -1080,6 +1080,8 @@ class VCSeeBingoPlayerRun:  UIViewController, UICollectionViewDelegate, UICollec
             BingoName = ""
             waitToTheLastToShowLooser = false
             WinnerIs = ""
+            // testa
+            VCAuth().forceLogout()
             performSegue(withIdentifier: "bingoBackToStart", sender: 1)
         }else{
             performSegue(withIdentifier: "bingoBackToMap", sender: 1)

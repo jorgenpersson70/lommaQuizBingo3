@@ -1072,6 +1072,8 @@ class VCBingoSmall: UIViewController, UICollectionViewDelegate, UICollectionView
             BingoName = ""
             waitToTheLastToShowLooser = false
             WinnerIs = ""
+            // testa
+            VCAuth().forceLogout()
             performSegue(withIdentifier: "bingoBackToStartSmall", sender: 1)
         }else{
             performSegue(withIdentifier: "bingoBackToMapSmall", sender: 1)

@@ -126,8 +126,7 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
                         }else{
                             useCheatCoordinates = true
                         }
-     // hallå test
-                      // Nej !! nu har jag releasad version som inte tittar på highest
+     
                         print(LoginInfo)
                         if ((LoginInfo == "Yes") && (loggedInHighest)){
                             useCheatCoordinates = true
@@ -153,6 +152,8 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     }
     
     @IBAction func StopWalk(_ sender: Any) {
+        // testa
+        VCAuth().forceLogout()
         walkFiniched()
     }
    
@@ -424,7 +425,7 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     func GoToQuestion(questionNumber:Int) {
         if (quizname == "Bingo"){
-            if (UIScreen.main.bounds.width < 400.0){
+            if (UIScreen.main.bounds.width < 390.0){
                 performSegue(withIdentifier: "gotoBingoSmall", sender: questionNumber)
             }else{
                 performSegue(withIdentifier: "showBingo", sender: questionNumber)

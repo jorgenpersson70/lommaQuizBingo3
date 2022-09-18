@@ -24,6 +24,8 @@ class VCSeeResultOneByOne: UIViewController {
     
     @IBOutlet weak var myImage: UIImageView!
     
+    @IBOutlet weak var makeLargePicButton: UIButton!
+    
     let storage = Storage.storage()
     var player:AVPlayer!
     var infotext = ""
@@ -45,6 +47,8 @@ class VCSeeResultOneByOne: UIViewController {
         // Otherwise it will show for a short time
         ButtonListen.isEnabled = false
         ButtonListen.alpha = 0
+        makeLargePicButton.isEnabled = false
+        makeLargePicButton.alpha = 0
         
         ref = Database.database().reference()
         
@@ -91,6 +95,14 @@ class VCSeeResultOneByOne: UIViewController {
  
     }
     
+    
+    @IBAction func largePicButton(_ sender: Any) {
+        
+        if (URLs[questionnumberInt-1] != ""){
+            performSegue(withIdentifier: "largePic2", sender: 1)
+        }
+    }
+    
     @IBAction func ButtonListenClick(_ sender: Any) {
        // Talk()
         TalkNew()
@@ -131,11 +143,17 @@ class VCSeeResultOneByOne: UIViewController {
         }
         
         if ((URLs[questionnumberInt-1] != "") && song){
-            ButtonListen.isEnabled = true
-            ButtonListen.alpha = 1
-        }
-    
-        else{
+                ButtonListen.isEnabled = true
+                ButtonListen.alpha = 1
+                makeLargePicButton.isEnabled = false
+                makeLargePicButton.alpha = 0
+        }else{
+            
+            if ((URLs[questionnumberInt-1] != "") && !song){
+                makeLargePicButton.isEnabled = true
+                makeLargePicButton.alpha = 1
+            }
+            
             ButtonListen.isEnabled = false
             ButtonListen.alpha = 0
         }
@@ -254,6 +272,17 @@ class VCSeeResultOneByOne: UIViewController {
                 self.player!.play()
             }
           }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        
+        if (segue.identifier == "largePic2"){
+            if (URLs[questionnumberInt-1] != ""){
+                let dest = segue.destination as! VCShowPic
+                dest.URLString = URLs[questionnumberInt-1]
+            }
         }
     }
 

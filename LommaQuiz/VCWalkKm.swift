@@ -12,6 +12,7 @@ import AVKit
 import AVFAudio
 
 var YourAnswer = Array(repeating: 0, count: 12)
+//var URLString = ""
 
 class VCWalkKm: UIViewController {
     @IBOutlet weak var Answer1TextView: UITextView!
@@ -25,6 +26,8 @@ class VCWalkKm: UIViewController {
     @IBOutlet weak var ButtonListen: UIButton!
     
     @IBOutlet weak var myImage: UIImageView!
+    
+    @IBOutlet weak var makeLargePicButton: UIButton!
     
  //   var urlStringFrom = ""
     
@@ -62,6 +65,8 @@ class VCWalkKm: UIViewController {
             // Otherwise it will show for a short time
             ButtonListen.isEnabled = false
             ButtonListen.alpha = 0
+            makeLargePicButton.isEnabled = false
+            makeLargePicButton.alpha = 0
             
             ref = Database.database().reference()
                     
@@ -85,6 +90,7 @@ class VCWalkKm: UIViewController {
                             self.answers3.append(quizNameChildInfo["Answer 3"]!)
                             self.correctanswers.append(quizNameChildInfo["Correct Answer"]!)
                             self.URLs.append(quizNameChildInfo["URLString"]!)
+                      //      URLString = quizNameChildInfo["URLString"]!
                             self.FoundQuestions = 1
                         }
                         
@@ -155,10 +161,18 @@ class VCWalkKm: UIViewController {
         if ((URLs[questionnumberInt-1] != "") && song){
             ButtonListen.isEnabled = true
             ButtonListen.alpha = 1
+            makeLargePicButton.isEnabled = false
+            makeLargePicButton.alpha = 0
         }
         else{
+            if ((URLs[questionnumberInt-1] != "") && !song){
+                makeLargePicButton.isEnabled = true
+                makeLargePicButton.alpha = 1
+            }
+            
             ButtonListen.isEnabled = false
             ButtonListen.alpha = 0
+            
         }
         
         ButtonAnswer1.layer.cornerRadius = 5
@@ -252,6 +266,14 @@ class VCWalkKm: UIViewController {
         Talk()
     }
     
+    
+    @IBAction func largePicButton(_ sender: Any) {
+        
+        if (URLs[questionnumberInt-1] != ""){
+            performSegue(withIdentifier: "largePic", sender: 1)
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if (segue.identifier == "backToMap"){
@@ -267,11 +289,22 @@ class VCWalkKm: UIViewController {
             if (segue.identifier == "backToStart"){
                 let dest = segue.destination as! ViewController
             }else{
-                let dest = segue.destination as! VCResultat
-                dest.quizname = quizname
-                dest.YourAnswer = YourAnswer
+                if (segue.identifier == "largePic"){
+                    
+                    if (URLs[questionnumberInt-1] != ""){
+                        let dest = segue.destination as! VCShowPic
+                        dest.URLString = URLs[questionnumberInt-1]
+                    }
+                    
+                }else{
+                    let dest = segue.destination as! VCResultat
+                    dest.quizname = quizname
+                    dest.YourAnswer = YourAnswer
+                }
             }
         }
+        
+        
     }
     
     func Talk() {

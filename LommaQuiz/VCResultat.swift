@@ -118,6 +118,8 @@ class VCResultat: UIViewController {
     }
     
     @IBAction func ToStartMenu(_ sender: Any) {
+        // testa
+        VCAuth().forceLogout()
         performSegue(withIdentifier: "toStartMenu", sender: 1)
     }
     

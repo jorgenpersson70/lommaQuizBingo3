@@ -7,6 +7,8 @@
 import UIKit
 import FirebaseAuth
 
+
+
 class VCAuth: UIViewController {
 
     @IBOutlet weak var emailText: UITextField!
@@ -19,6 +21,7 @@ class VCAuth: UIViewController {
     @IBOutlet weak var showWidth: UITextField!
     
     @IBOutlet weak var showHeight: UITextField!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +53,20 @@ class VCAuth: UIViewController {
         
         
     }
+    
+    
+    @IBAction func createWalkButton(_ sender: Any) {
+        forceWalkCreate(email: "rundac@icloud.com", password: "rundac")
+        self.showStatusTV.text = "Inloggad. Tryck Back och Back och välj VÄLJ PROMENAD OCH välj SKAPA RUNDA"
+    }
+   
+        
+    
+    @IBAction func createBingoButton(_ sender: Any) {
+        forceBingoCreate(email: "bingoc@icloud.com", password: "bingoc")
+        self.showStatusTV.text = "Inloggad. Tryck Back och Back och välj SKAPA BINGORUNDA"
+    }
+    
     
     @IBAction func logoutButton(_ sender: Any) {
        
@@ -131,6 +148,38 @@ class VCAuth: UIViewController {
     }
     
     func forceBingoLogin(email : String, password : String) {
+        print(email)
+        print(password)
+        print("hej")
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+          guard let strongSelf = self else { return }
+            if error == nil{
+                self!.dismiss(animated: false, completion: nil)
+            }
+            else{
+                // ajdå
+                print("login fel")
+            }
+        }
+    }
+    
+    func forceBingoCreate(email : String, password : String) {
+        print(email)
+        print(password)
+        print("hej")
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+          guard let strongSelf = self else { return }
+            if error == nil{
+                self!.dismiss(animated: false, completion: nil)
+            }
+            else{
+                // ajdå
+                print("login fel")
+            }
+        }
+    }
+    
+    func forceWalkCreate(email : String, password : String) {
         print(email)
         print(password)
         print("hej")
