@@ -125,6 +125,7 @@ class VCLogin: UIViewController {
         getLoginText()
         makeInvisable()
         
+        
         showIfLoginLogout.text = "Du är inte inloggad"
         if (loggedInToWalkSombodysSpecial){
             showIfLoginLogout.text = "Du är inloggad på rundan"
@@ -213,6 +214,7 @@ class VCLogin: UIViewController {
     
     // logga ut skall inte finnas på bingorundan
     
+    // If they press login more than once, we do not come here more than one time bacause if (BingoName == ""){
     
     func CheckIfBingoPassword()->Bool {
         foundBingoPassword = false
@@ -248,6 +250,7 @@ class VCLogin: UIViewController {
                                 // check if maximum participants have been reached
                                 if (countExpected == countLoggedIn){
                                     showIfLoginLogout.text = "Max antal deltagare har redan loggat in"
+                                    // här får inte stå return false, vet ej varför
                                     return;
                                 }
                             
@@ -319,6 +322,7 @@ class VCLogin: UIViewController {
                                              print(snapshot)
                                             if (snapshot != nil)
                                             {
+                                                
                                                 PersonsLoggedIn = snapshot.value as! String
                                                 youAreplayer = Int(PersonsLoggedIn)!
                                                 youAreplayer += 1
@@ -328,9 +332,11 @@ class VCLogin: UIViewController {
                                                 // from VCBingoSmall, I think I have to reset it to be sure
                                                 waitToTheLastToShowLooser = false
                                                 WinnerIs = ""
+                                                winnerTextMain = false
                                                 
                                                 // here we know that values to present have been read
                                                 getTheValuesToPopUp()
+                                               
                                                 
                                                 var PointToPlayer = youAreplayer + 1
                                                 
@@ -339,7 +345,19 @@ class VCLogin: UIViewController {
                                                     PointToPlayer = 1
                                                 }
                                                 
-                                                self.ref.child("BingoName").child(ChildByAuto).child("PersonsLoggedIn").setValue(String(youAreplayer))
+                                          //      self.ref.child("BingoName").child(ChildByAuto).child("PersonsLoggedIn").setValue(String(youAreplayer))
+                                                
+                                                self.ref.child("BingoName").child(ChildByAuto).child("PersonsLoggedIn").setValue(String(youAreplayer)) { (error, ref) in
+                                                        if error != nil {
+                                                            showIfLoginLogout.text = "Fel vid skrivning till databas"
+                                                            youAreplayer -= 1
+                                                            foundBingoPassword = false
+                                                            BingoName = ""
+                                                            return;
+                                                        } else {
+                                                            print("Success update newValue to database")
+                                                        }
+                                                    }
                                                 
                                                 
                                                 // the winning numbers are placed at "BingoPlayersCharts" "name" "Player 1" so everyone points at Player 2 and over and the winner is pointed to Player 1
@@ -436,7 +454,7 @@ class VCLogin: UIViewController {
     
     
     
-    
+    // aha, detta är bara när man trycker enter. När jag på simulatorn bara går över till nytt fält så hamnar jag inte här
     @IBAction func endedWriteBingoLogin(_ sender: UITextField) {
         VCAuth().forceBingoLogin(email: "bingou@icloud.com", password: "bingou")
     }
@@ -456,11 +474,22 @@ class VCLogin: UIViewController {
     
     @IBAction func logIn(_ sender: Any) {
         
+        if (writtenPasswordBingo.text != ""){
+            VCAuth().forceBingoLogin(email: "bingou@icloud.com", password: "bingou")
+            // to prevent for login in once more by misstake
             if (BingoName == ""){
                 if (CheckIfBingoPassword()){
                     
                 }
             }
+        }
+        
+    /*     föregående release   if (BingoName == ""){
+                
+                if (CheckIfBingoPassword()){
+                    
+                }
+            }*/
         
             var login = quizCreatorList.contains(where: writtenPassword.text!.contains)
             

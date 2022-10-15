@@ -525,7 +525,7 @@
 				CODE_SIGN_ENTITLEMENTS = LommaQuiz/LommaQuiz.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20220918;
+				CURRENT_PROJECT_VERSION = 20221015;
 				DEVELOPMENT_TEAM = U77KX73954;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LommaQuiz/Info.plist;
@@ -544,7 +544,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.3;
+				MARKETING_VERSION = 3.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jorgen-raby.LommaQuiz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -563,7 +563,7 @@
 				CODE_SIGN_ENTITLEMENTS = LommaQuiz/LommaQuiz.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20220918;
+				CURRENT_PROJECT_VERSION = 20221015;
 				DEVELOPMENT_TEAM = U77KX73954;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LommaQuiz/Info.plist;
@@ -582,7 +582,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.3;
+				MARKETING_VERSION = 3.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jorgen-raby.LommaQuiz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

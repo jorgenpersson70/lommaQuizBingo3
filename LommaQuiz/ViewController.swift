@@ -15,15 +15,23 @@ import Lottie
 import ImageIO
 import MobileCoreServices
 
-var chosenWalkGlobal = 0
+// when compiling for phone, set it to false. For mac, true
+var forDebugAtMac = false
 
+
+var chosenWalkGlobal = 0
+var winnerTextMain = false
+
+// trycker vi back så körs inte denna
 class ViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDelegate{
     @IBOutlet weak var startWalkButtonText: UILabel!
     @IBOutlet weak var choseWalkButton: UIButton!
     @IBOutlet weak var adminLoginText: UIButton!
     @IBOutlet weak var createBingoButton: UIButton!
     @IBOutlet weak var myAnimation: AnimationView!
-
+    
+    @IBOutlet weak var WinnerText: UIImageView!
+    
     var chosenWalk = 1
     var fruits = [String]()
     var fruit2 = ""
@@ -34,6 +42,12 @@ class ViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if (winnerTextMain){
+            WinnerText.isHidden = false
+        }else{
+            WinnerText.isHidden = true
+        }
         
         chosenWalkGlobal = chosenWalk
         
@@ -81,6 +95,14 @@ class ViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDelega
     }*/
     
     override func viewDidAppear(_ animated: Bool) {
+        
+        if (winnerTextMain){
+            WinnerText.isHidden = false
+        }else{
+            WinnerText.isHidden = true
+        }
+        
+        
         // if they have logged in for bingo and it is connected to a special walk, then make the choice disappear
         if ((loggedInToWalkSombodysSpecial) || (questUserBingo != "")){
             choseWalkButton.isEnabled = false
@@ -174,6 +196,8 @@ class ViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDelega
         }
     
     @IBAction func StartWalk(_ sender: Any) {
+        // If they got bingo and starts at quiz-walk, take the text away
+        winnerTextMain = false
      //   loggedInToWalkSombodysSpecial
         // because if they have not made a choice, then coords are not loaded
         if (chosenWalkGlobal == 1)

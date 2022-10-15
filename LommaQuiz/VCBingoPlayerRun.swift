@@ -158,6 +158,7 @@ class VCSeeBingoPlayerRun:  UIViewController, UICollectionViewDelegate, UICollec
                 // alert, when you press TILLBAKA, your proof of winning is lost.
                 self.NextButton.backgroundColor = .red
                 proofOfWinnerAlert.text = "OBS! När du trycker NÄSTA så försvinner ditt bevis på att du vann."
+                winnerTextMain = true
             }else{
                 waitToTheLastToShowLooser = true
               //  self.winnerTV.text = "Deltagare " + theWinner + " har fått BINGO"
@@ -289,7 +290,14 @@ class VCSeeBingoPlayerRun:  UIViewController, UICollectionViewDelegate, UICollec
             }
         }
         if (countTheValues == 35){
-            
+            /* vid buggrätt så tror jag att detta skall in här. kolla så vi inte hoppar till main
+             if (waitToTheLastToShowLooser){
+                 self.proofOfWinnerAlert.isHidden = false
+                 self.winnerTV.isHidden = false
+                 self.winnerTV.text = "Deltagare " + WinnerIs + " har fått BINGO"
+                 proofOfWinnerAlert.text = "OBS! När du trycker NÄSTA så kan du inte se bingobrickorna igen"
+             }
+             */
             return true
         }else{
             return false

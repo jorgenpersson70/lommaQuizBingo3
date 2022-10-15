@@ -7,16 +7,7 @@
 
 import UIKit
 import Firebase
-//var test : String = "hej"
 
-//var dataArray:[Any] = []
-//var testar : BingoPresentValues = [Int]
-
-//var one : [Int] = []
-//var one2 :  Bingo1 = [1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15]
-//var testar : [Bingo1] = []
-
-/*[[ValuesToPresentBRead, ValuesToPresentBRead, ValuesToPresentBRead, ValuesToPresentBRead, ValuesToPresentBRead]]*/
 
 
 // to be able to create own bingo, they must log in as jorgen@icloud.com or bingoc@icloud.com
@@ -33,8 +24,6 @@ class VCBingo: UIViewController {
     @IBOutlet weak var LogginPassword: UITextField!
     
     @IBOutlet weak var AlertTextView: UITextView!
-    
-    
     
     
     let BValues = [1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15].shuffled()
@@ -184,6 +173,9 @@ class VCBingo: UIViewController {
     var ChildByAutoErase = ""
     
     
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         ref = Database.database().reference()
@@ -196,7 +188,9 @@ class VCBingo: UIViewController {
         
         loadPassword()
      
+        // I would rather get the date from internet but I could not find a way
         getDate()
+        
         checkIfWeShouldErase()
         
         //Looks for single or multiple taps.
@@ -207,6 +201,8 @@ class VCBingo: UIViewController {
 
             view.addGestureRecognizer(tap)
     }
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         if (ownWalk2 != ""){
@@ -241,8 +237,14 @@ class VCBingo: UIViewController {
                     for quizNameChild in snapshot.children
                     {
                         let quizNameChildSnap = quizNameChild as! DataSnapshot
+      // krasch här, vad betyder det?
+                        
+                        // aha, är det att jag skrev ner en int från kotlin och inte en sträng ?
                         let quizNameChildInfo = quizNameChildSnap.value as! String
+                        
+                        
                         LatestPassword = quizNameChildInfo
+                     //   LatestPassword = "1"
                     }
                 }
                 else
@@ -345,7 +347,8 @@ class VCBingo: UIViewController {
  //                                               takeAwayButtonToChooseRunda = true
                                             }
                         
-                                            if ((BingoCountPersons.text != "") && (BingGroupName.text != "") && (CountInt > 0) && (CountInt < 11) && (Exists == false) && (walkExists)){
+                             /*               if ((BingoCountPersons.text != "") && (BingGroupName.text != "") && (CountInt > 0) && (CountInt < 11) && (Exists == false) && (walkExists)){*/
+                                        if ((BingoCountPersons.text != "") && (BingGroupName.text != "") && (CountInt > 0) && (CountInt < 11) && (Exists == false) && (walkExists) && (BingGroupName.text!.count < 16)){
                                                 
                                                 // sätt maxlängd på sträng för namn
                                                 
@@ -469,30 +472,43 @@ class VCBingo: UIViewController {
                                                         // eller skall de vara under arne ??
                                                     self.ref.child("BingoPlayersCharts").child(String(BingGroupName.text!)).child(TempStr + String(i)).child("B1values").setValue(self.BValuesTemp)
                                                     self.ref.child("BingoPlayersCharts").child(String(BingGroupName.text!)).child(TempStr + String(i)).child("B2Ivalues").setValue(self.IValuesTemp)
+                                                    
                                                     self.ref.child("BingoPlayersCharts").child(String(BingGroupName.text!)).child(TempStr + String(i)).child("B3Ivalues").setValue(self.NValuesTemp)
                                                     self.ref.child("BingoPlayersCharts").child(String(BingGroupName.text!)).child(TempStr + String(i)).child("B4Gvalues").setValue(self.GValuesTemp)
                                                     self.ref.child("BingoPlayersCharts").child(String(BingGroupName.text!)).child(TempStr + String(i)).child("B5Ovalues").setValue(self.OValuesTemp)
                                                         }
+                                            
+                                            // ny
+                                            self.ref.child("BingoWinnerNumbers").child(String(BingGroupName.text!)).child("WinnerNumbers").child("1").setValue(WinnerNumbers[0])
+                                            self.ref.child("BingoWinnerNumbers").child(String(BingGroupName.text!)).child("WinnerNumbers").child("2").setValue(WinnerNumbers[1])
+                                            self.ref.child("BingoWinnerNumbers").child(String(BingGroupName.text!)).child("WinnerNumbers").child("3").setValue(WinnerNumbers[2])
+                                            self.ref.child("BingoWinnerNumbers").child(String(BingGroupName.text!)).child("WinnerNumbers").child("4").setValue(WinnerNumbers[3])
+                                            self.ref.child("BingoWinnerNumbers").child(String(BingGroupName.text!)).child("WinnerNumbers").child("5").setValue(WinnerNumbers[4])
+                                            
                                             }
-                                            else{
-                                                AlertTextView.isHidden = false
-                                                
-                                                if (!walkExists){
-                                                    AlertTextView.text = "DET FINNS INGEN RUNDA MED DET NAMNET"
-                                                }else{
-                                                    if (Exists){
-                                                        AlertTextView.text = "NAMNET FINNS REDAN"
-                                                    } else{
-                                                        if ((CountInt < 1) || (CountInt > 10)){
-                                                            AlertTextView.text = "JUSTERA ANTAL"
+                                        else{
+                                            AlertTextView.isHidden = false
+                                            
+                                            if (!walkExists){
+                                                AlertTextView.text = "DET FINNS INGEN RUNDA MED DET NAMNET"
+                                            }else{
+                                                if (Exists){
+                                                    AlertTextView.text = "NAMNET FINNS REDAN"
+                                                } else{
+                                                    if ((CountInt < 1) || (CountInt > 10)){
+                                                        AlertTextView.text = "JUSTERA ANTAL"
+                                                    }else{
+                                                        if (BingGroupName.text!.count > 15){
+                                                            AlertTextView.text = "NAMN HÖGST 15 TECKEN"
                                                         }else{
-                                                            
+                                                            // if nothing was written
                                                             AlertTextView.text = "JUSTERA NAMN"
                                                         }
                                                     }
                                                 }
                                             }
-                                    }
+                                        }
+                                }
                                     else
                                     {
                                         print("snapshot == nil")
@@ -569,7 +585,741 @@ class VCBingo: UIViewController {
             }
     }
     
-    func GetWinnerNumbers(){
+            func GetWinnerNumbers(){
+                var HowMany = 0
+                // rows
+                   if (WhereToPutIt < 16){
+                       WinnerNumbers[0] = BValues[WhereToPutIt-1]
+                       WinnerNumbers[1] = IValues[WhereToPutIt-1]
+                       WinnerNumbers[2] = NValues[WhereToPutIt-1]
+                       WinnerNumbers[3] = GValues[WhereToPutIt-1]
+                       WinnerNumbers[4] = OValues[WhereToPutIt-1]
+                       
+                       for m in 0...6{
+                           if (WinnerNumbers[0] == ValuesToPresentB[m]){
+                               var temp = ValuesToPresentB[6]
+                          
+                               // change so the they walk the hole round, pos 11 or pos 12 before there is a winner
+                               ValuesToPresentB[6] = WinnerNumbers[0]
+                               
+                               ValuesToPresentB[m] = temp
+                               
+                               HowMany += 1
+                               break
+                           }
+                       }
+                       // not found
+                       if (HowMany == 0){
+                           var temp = ValuesToPresentB[6]
+                           ValuesToPresentB[6] = WinnerNumbers[0]
+                           
+                           ValuesToPresentB[0] = temp
+                           
+                           HowMany += 1
+                       }
+                       HowMany = 0
+                       for m in 0...6{
+                           if (WinnerNumbers[1] == ValuesToPresentI[m]){
+                               var temp = ValuesToPresentI[6]
+                               ValuesToPresentI[6] = WinnerNumbers[1]
+                               ValuesToPresentI[m] = temp
+                               
+                               HowMany += 1
+                               break
+                           }
+                       }
+                       // not found
+                       if (HowMany == 0){
+                           var temp = ValuesToPresentI[6]
+                           ValuesToPresentI[6] = WinnerNumbers[1]
+                           
+                           ValuesToPresentI[0] = temp
+                           
+                           HowMany += 1
+                       }
+                       HowMany = 0
+                       for m in 0...6{
+                           if (WinnerNumbers[2] == ValuesToPresentN[m]){
+                               var temp = ValuesToPresentN[6]
+                               ValuesToPresentN[6] = WinnerNumbers[2]
+                               ValuesToPresentN[m] = temp
+                               
+                               HowMany += 1
+                               break
+                           }
+                       }
+                       // not found
+                       if (HowMany == 0){
+                           var temp = ValuesToPresentN[6]
+                           ValuesToPresentN[6] = WinnerNumbers[2]
+                           
+                           ValuesToPresentN[0] = temp
+                           
+                           HowMany += 1
+                       }
+                       HowMany = 0
+                       for m in 0...6{
+                           if (WinnerNumbers[3] == ValuesToPresentG[m]){
+                               var temp = ValuesToPresentG[6]
+                               ValuesToPresentG[6] = WinnerNumbers[3]
+                               ValuesToPresentG[m] = temp
+                               
+                               HowMany += 1
+                               break
+                           }
+                       }
+                       // not found
+                       if (HowMany == 0){
+                           var temp = ValuesToPresentG[6]
+                           ValuesToPresentG[6] = WinnerNumbers[3]
+                           
+                           ValuesToPresentG[0] = temp
+                           
+                           HowMany += 1
+                       }
+                       HowMany = 0
+                       for m in 0...6{
+                           if (WinnerNumbers[4] == ValuesToPresentO[m]){
+                               var temp = ValuesToPresentO[6]
+                               ValuesToPresentO[6] = WinnerNumbers[4]
+                               ValuesToPresentO[m] = temp
+                               
+                               HowMany += 1
+                               break
+                           }
+                       }
+                       
+                       // not found
+                       if (HowMany == 0){
+                           var temp = ValuesToPresentO[6]
+                           ValuesToPresentO[6] = WinnerNumbers[4]
+                           
+                           ValuesToPresentO[0] = temp
+                           
+                           HowMany += 1
+                       }
+                       print("sä många ", String(HowMany))
+                       print("sä många ", String(HowMany))
+                }
+            
+                   // columns
+                if ((WhereToPutIt > 15) && (WhereToPutIt < 31))
+                {
+                   if (WhereToPutIt == 16){
+                       WinnerNumbers[0] = BValues[0]
+                       WinnerNumbers[1] = BValues[1]
+                       WinnerNumbers[2] = BValues[2]
+                       WinnerNumbers[3] = BValues[3]
+                       WinnerNumbers[4] = BValues[4]
+                   }
+                   if (WhereToPutIt == 17){
+                       WinnerNumbers[0] = IValues[0]
+                       WinnerNumbers[1] = IValues[1]
+                       WinnerNumbers[2] = IValues[2]
+                       WinnerNumbers[3] = IValues[3]
+                       WinnerNumbers[4] = IValues[4]
+                   }
+                   if (WhereToPutIt == 18){
+                       WinnerNumbers[0] = NValues[0]
+                       WinnerNumbers[1] = NValues[1]
+                       WinnerNumbers[2] = NValues[2]
+                       WinnerNumbers[3] = NValues[3]
+                       WinnerNumbers[4] = NValues[4]
+                   }
+                    if (WhereToPutIt == 19){
+                        WinnerNumbers[0] = GValues[0]
+                        WinnerNumbers[1] = GValues[1]
+                        WinnerNumbers[2] = GValues[2]
+                        WinnerNumbers[3] = GValues[3]
+                        WinnerNumbers[4] = GValues[4]
+                    }
+                    if (WhereToPutIt == 20){
+                        WinnerNumbers[0] = OValues[0]
+                        WinnerNumbers[1] = OValues[1]
+                        WinnerNumbers[2] = OValues[2]
+                        WinnerNumbers[3] = OValues[3]
+                        WinnerNumbers[4] = OValues[4]
+                    }
+                    
+                    
+                    if (WhereToPutIt == 21){
+                        WinnerNumbers[0] = BValues[5]
+                        WinnerNumbers[1] = BValues[6]
+                        WinnerNumbers[2] = BValues[7]
+                        WinnerNumbers[3] = BValues[8]
+                        WinnerNumbers[4] = BValues[9]
+                    }
+                    if (WhereToPutIt == 22){
+                        WinnerNumbers[0] = IValues[5]
+                        WinnerNumbers[1] = IValues[6]
+                        WinnerNumbers[2] = IValues[7]
+                        WinnerNumbers[3] = IValues[8]
+                        WinnerNumbers[4] = IValues[9]
+                    }
+                    if (WhereToPutIt == 23){
+                        WinnerNumbers[0] = NValues[5]
+                        WinnerNumbers[1] = NValues[6]
+                        WinnerNumbers[2] = NValues[7]
+                        WinnerNumbers[3] = NValues[8]
+                        WinnerNumbers[4] = NValues[9]
+                    }
+                     if (WhereToPutIt == 24){
+                         WinnerNumbers[0] = GValues[5]
+                         WinnerNumbers[1] = GValues[6]
+                         WinnerNumbers[2] = GValues[7]
+                         WinnerNumbers[3] = GValues[8]
+                         WinnerNumbers[4] = GValues[9]
+                     }
+                     if (WhereToPutIt == 25){
+                         WinnerNumbers[0] = OValues[5]
+                         WinnerNumbers[1] = OValues[6]
+                         WinnerNumbers[2] = OValues[7]
+                         WinnerNumbers[3] = OValues[8]
+                         WinnerNumbers[4] = OValues[9]
+                     }
+                    
+                    if (WhereToPutIt == 26){
+                        WinnerNumbers[0] = BValues[10]
+                        WinnerNumbers[1] = BValues[11]
+                        WinnerNumbers[2] = BValues[12]
+                        WinnerNumbers[3] = BValues[13]
+                        WinnerNumbers[4] = BValues[14]
+                    }
+                    if (WhereToPutIt == 27){
+                        WinnerNumbers[0] = IValues[10]
+                        WinnerNumbers[1] = IValues[11]
+                        WinnerNumbers[2] = IValues[12]
+                        WinnerNumbers[3] = IValues[13]
+                        WinnerNumbers[4] = IValues[14]
+                    }
+                    if (WhereToPutIt == 28){
+                        WinnerNumbers[0] = NValues[10]
+                        WinnerNumbers[1] = NValues[11]
+                        WinnerNumbers[2] = NValues[12]
+                        WinnerNumbers[3] = NValues[13]
+                        WinnerNumbers[4] = NValues[14]
+                    }
+                     if (WhereToPutIt == 29){
+                         WinnerNumbers[0] = GValues[10]
+                         WinnerNumbers[1] = GValues[11]
+                         WinnerNumbers[2] = GValues[12]
+                         WinnerNumbers[3] = GValues[13]
+                         WinnerNumbers[4] = GValues[14]
+                     }
+                     if (WhereToPutIt == 30){
+                         WinnerNumbers[0] = OValues[10]
+                         WinnerNumbers[1] = OValues[11]
+                         WinnerNumbers[2] = OValues[12]
+                         WinnerNumbers[3] = OValues[13]
+                         WinnerNumbers[4] = OValues[14]
+                     }
+                    
+                    var n = (WhereToPutIt-1) % 5
+                    
+                    
+                    // risk för dubbel ?
+                    
+                    // column B
+                    if (n == 0){
+                     /*   for m in 0...5{
+                            if (WinnerNumbers[0] == ValuesToPresentB[m]){
+                                
+                                var temp = ValuesToPresentB[6]
+                                
+                                ValuesToPresentB[m] = temp
+                                
+                                HowMany += 1
+                                break
+                                
+                            }
+                        }*/
+                        ValuesToPresentB[0] = WinnerNumbers[0]
+                        ValuesToPresentB[2] = WinnerNumbers[1]
+                        ValuesToPresentB[4] = WinnerNumbers[2]
+                        ValuesToPresentB[5] = WinnerNumbers[3]
+                        ValuesToPresentB[6] = WinnerNumbers[4]
+                        // check if 1 and 3 is duplicate winnernumber
+                        while testDoubleB1(){
+                            
+                        }
+                        
+                        while testDoubleB3(){
+                            
+                        }
+                    }
+                    
+                    
+                    // column I
+                    if (n == 1){
+                     /*   for m in 0...5{
+                            
+                            if (WinnerNumbers[1] == ValuesToPresentI[m]){
+                                var temp = ValuesToPresentI[6]
+                    
+                                
+                                ValuesToPresentB[m] = temp
+                                
+                                HowMany += 1
+                                break
+                            }
+                        }*/
+                        ValuesToPresentI[0] = WinnerNumbers[0]
+                        ValuesToPresentI[2] = WinnerNumbers[1]
+                        ValuesToPresentI[4] = WinnerNumbers[2]
+                        ValuesToPresentI[5] = WinnerNumbers[3]
+                        ValuesToPresentI[6] = WinnerNumbers[4]
+                        // check if 1 and 3 is duplicate winnernumber
+                        while testDoubleI1(){
+                            
+                        }
+                        
+                        while testDoubleI3(){
+                            
+                        }
+                    
+                    }
+                    
+                    // column N
+                    if (n == 2){
+                      /*  for m in 0...5{
+                            if (WinnerNumbers[2] == ValuesToPresentN[m]){
+                                var temp = ValuesToPresentN[6]
+                    
+                                
+                                ValuesToPresentN[m] = temp
+                                
+                                HowMany += 1
+                                break
+                            }
+                        }*/
+                    
+                        ValuesToPresentN[0] = WinnerNumbers[0]
+                        ValuesToPresentN[2] = WinnerNumbers[1]
+                        ValuesToPresentN[4] = WinnerNumbers[2]
+                        ValuesToPresentN[5] = WinnerNumbers[3]
+                        ValuesToPresentN[6] = WinnerNumbers[4]
+                        
+                        // check if 1 and 3 is duplicate winnernumber
+                        while testDoubleN1(){
+                            
+                        }
+                        
+                        while testDoubleN3(){
+                            
+                        }
+                    }
+                    
+                    // column G
+                    if (n == 3){
+                      /*  for m in 0...5{
+                            if (WinnerNumbers[3] == ValuesToPresentG[m]){
+                                var temp = ValuesToPresentG[6]
+                     
+                                
+                                ValuesToPresentG[m] = temp
+                                
+                                HowMany += 1
+                                break
+                            }
+                        }*/
+                        ValuesToPresentG[0] = WinnerNumbers[0]
+                        ValuesToPresentG[2] = WinnerNumbers[1]
+                        ValuesToPresentG[4] = WinnerNumbers[2]
+                        ValuesToPresentG[5] = WinnerNumbers[3]
+                        ValuesToPresentG[6] = WinnerNumbers[4]
+                        
+                        // check if 1 and 3 is duplicate winnernumber
+                        while testDoubleG1(){
+                            
+                        }
+                        
+                        while testDoubleG3(){
+                            
+                        }
+                    }
+                    
+                    // column O
+                    if (n == 4){
+                 /*       for m in 0...5{
+                            if (WinnerNumbers[4] == ValuesToPresentO[m]){
+                                var temp = ValuesToPresentO[6]
+                    
+                                
+                                ValuesToPresentO[m] = temp
+                                
+                                HowMany += 1
+                                break
+                            }
+                        }*/
+                        ValuesToPresentO[0] = WinnerNumbers[0]
+                        ValuesToPresentO[2] = WinnerNumbers[1]
+                        ValuesToPresentO[4] = WinnerNumbers[2]
+                        ValuesToPresentO[5] = WinnerNumbers[3]
+                        ValuesToPresentO[6] = WinnerNumbers[4]
+                        
+                        // check if 1 and 3 is duplicate winnernumber
+                        while testDoubleO1(){
+                            
+                        }
+                        
+                        while testDoubleO3(){
+                            
+                        }
+                    }
+                    
+                    
+                    print("sä många ", String(HowMany))
+                    print("sä många ", String(HowMany))
+                    
+                }
+                
+                // Diagonal
+                if ((WhereToPutIt > 30) && (WhereToPutIt < 37)){
+                    // chart 1
+                    // X
+                    //   X
+                    //     X
+                    if (WhereToPutIt == 31){
+                        WinnerNumbers[0] = BValues[0]
+                        WinnerNumbers[1] = IValues[1]
+                        WinnerNumbers[2] = NValues[2]
+                        WinnerNumbers[3] = GValues[3]
+                        WinnerNumbers[4] = OValues[4]
+                        print("b-nummer ", String(WinnerNumbers[0]))
+                        print("i-nummer ", String(WinnerNumbers[1]))
+                        print("n-nummer ", String(WinnerNumbers[2]))
+                        print("g-nummer ", String(WinnerNumbers[3]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        
+                    }
+                    // chart 1
+                    //     X
+                    //   X
+                    //  X
+                    if (WhereToPutIt == 32){
+                        WinnerNumbers[0] = BValues[4]
+                        WinnerNumbers[1] = IValues[3]
+                        WinnerNumbers[2] = NValues[2]
+                        WinnerNumbers[3] = GValues[1]
+                        WinnerNumbers[4] = OValues[0]
+                        print("b-nummer ", String(WinnerNumbers[0]))
+                        print("i-nummer ", String(WinnerNumbers[1]))
+                        print("n-nummer ", String(WinnerNumbers[2]))
+                        print("g-nummer ", String(WinnerNumbers[3]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                    }
+                    // chart 2
+                    // X
+                    //   X
+                    //     X
+                    if (WhereToPutIt == 33){
+                        WinnerNumbers[0] = BValues[5]
+                        WinnerNumbers[1] = IValues[6]
+                        WinnerNumbers[2] = NValues[7]
+                        WinnerNumbers[3] = GValues[8]
+                        WinnerNumbers[4] = OValues[9]
+                        print("b-nummer ", String(WinnerNumbers[0]))
+                        print("i-nummer ", String(WinnerNumbers[1]))
+                        print("n-nummer ", String(WinnerNumbers[2]))
+                        print("g-nummer ", String(WinnerNumbers[3]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                    }
+                    // chart 2
+                    //     X
+                    //   X
+                    //  X
+                    if (WhereToPutIt == 34){
+                        WinnerNumbers[0] = BValues[9]
+                        WinnerNumbers[1] = IValues[8]
+                        WinnerNumbers[2] = NValues[7]
+                        WinnerNumbers[3] = GValues[6]
+                        WinnerNumbers[4] = OValues[5]
+                        print("b-nummer ", String(WinnerNumbers[0]))
+                        print("i-nummer ", String(WinnerNumbers[1]))
+                        print("n-nummer ", String(WinnerNumbers[2]))
+                        print("g-nummer ", String(WinnerNumbers[3]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                    }
+                    // chart 3
+                    // X
+                    //   X
+                    //     X
+                    if (WhereToPutIt == 35){
+                        WinnerNumbers[0] = BValues[10]
+                        WinnerNumbers[1] = IValues[11]
+                        WinnerNumbers[2] = NValues[12]
+                        WinnerNumbers[3] = GValues[13]
+                        WinnerNumbers[4] = OValues[14]
+                        print("b-nummer ", String(WinnerNumbers[0]))
+                        print("i-nummer ", String(WinnerNumbers[1]))
+                        print("n-nummer ", String(WinnerNumbers[2]))
+                        print("g-nummer ", String(WinnerNumbers[3]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                    }
+                    // chart 3
+                    //     X
+                    //   X
+                    //  X
+                    if (WhereToPutIt == 36){
+                        WinnerNumbers[0] = BValues[14]
+                        WinnerNumbers[1] = IValues[13]
+                        WinnerNumbers[2] = NValues[12]
+                        WinnerNumbers[3] = GValues[11]
+                        WinnerNumbers[4] = OValues[10]
+                        print("b-nummer ", String(WinnerNumbers[0]))
+                        print("i-nummer ", String(WinnerNumbers[1]))
+                        print("n-nummer ", String(WinnerNumbers[2]))
+                        print("g-nummer ", String(WinnerNumbers[3]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                        print("o-nummer ", String(WinnerNumbers[4]))
+                    }
+                    
+                    for m in 0...5{
+                        if (WinnerNumbers[0] == ValuesToPresentB[m]){
+                            var temp = ValuesToPresentB[6]
+                 //           ValuesToPresentB[6] = WinnerNumbers[0]
+                            
+                            ValuesToPresentB[m] = temp
+                            
+                            HowMany += 1
+                            break
+                        }
+                    }
+                    ValuesToPresentB[6] = WinnerNumbers[0]
+                    
+                    for m in 0...5{
+                        if (WinnerNumbers[1] == ValuesToPresentI[m]){
+                            var temp = ValuesToPresentI[6]
+                 //           ValuesToPresentB[6] = WinnerNumbers[0]
+                            
+                            ValuesToPresentI[m] = temp
+                            
+                            HowMany += 1
+                            break
+                        }
+                    }
+                    ValuesToPresentI[6] = WinnerNumbers[1]
+                    
+                    for m in 0...5{
+                        if (WinnerNumbers[2] == ValuesToPresentN[m]){
+                            var temp = ValuesToPresentN[6]
+                 //           ValuesToPresentB[6] = WinnerNumbers[0]
+                            
+                            ValuesToPresentN[m] = temp
+                            
+                            HowMany += 1
+                            break
+                        }
+                    }
+                    ValuesToPresentN[6] = WinnerNumbers[2]
+                    
+                    for m in 0...5{
+                        if (WinnerNumbers[3] == ValuesToPresentG[m]){
+                            var temp = ValuesToPresentG[6]
+                 //           ValuesToPresentB[6] = WinnerNumbers[0]
+                            
+                            ValuesToPresentG[m] = temp
+                            
+                            HowMany += 1
+                            break
+                        }
+                    }
+                    ValuesToPresentG[6] = WinnerNumbers[3]
+                    
+                    for m in 0...5{
+                        if (WinnerNumbers[4] == ValuesToPresentO[m]){
+                            var temp = ValuesToPresentO[6]
+                 //           ValuesToPresentB[6] = WinnerNumbers[0]
+                            
+                            ValuesToPresentO[m] = temp
+                            
+                            HowMany += 1
+                            break
+                        }
+                    }
+                    ValuesToPresentO[6] = WinnerNumbers[4]
+                    
+                    print("b-nummer ", String(ValuesToPresentB[6]))
+                    print("i-nummer ", String(ValuesToPresentI[6]))
+                    print("n-nummer ", String(ValuesToPresentN[6]))
+                    print("g-nummer ", String(ValuesToPresentG[6]))
+                    print("o-nummer ", String(ValuesToPresentO[6]))
+                    
+                    print("b-nummer ", String(ValuesToPresentO[6]))
+                    
+                    // The winning numbers must now be placed among the values that is to be presented
+                    
+                    
+                }
+            }
+            
+            // I have produced the b-values to present but I wanted a winner at position 11 or 12. To do that,
+            // I put the winning numbers at position 0,2,4,5,6. position 1 and 3 must nor contain a winner number
+            func testDoubleB1()->Bool{
+                var New = Int.random(in: 1..<16)
+                ValuesToPresentB[1] = New
+                
+                
+                if ((ValuesToPresentB[1] == WinnerNumbers[0])
+                    || (ValuesToPresentB[1] == WinnerNumbers[1])
+                    || (ValuesToPresentB[1] == WinnerNumbers[2])
+                    || (ValuesToPresentB[1] == WinnerNumbers[3])
+                    || (ValuesToPresentB[1] == WinnerNumbers[4])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleB3()->Bool{
+                var New = Int.random(in: 1..<16)
+                ValuesToPresentB[3] = New
+                if ((ValuesToPresentB[3] == WinnerNumbers[0])
+                    || (ValuesToPresentB[3] == WinnerNumbers[1])
+                    || (ValuesToPresentB[3] == WinnerNumbers[2])
+                    || (ValuesToPresentB[3] == WinnerNumbers[3])
+                    || (ValuesToPresentB[3] == WinnerNumbers[4])
+                    || (ValuesToPresentB[1] == ValuesToPresentB[3])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleI1()->Bool{
+                var New = Int.random(in: 16..<31)
+                ValuesToPresentI[1] = New
+                if ((ValuesToPresentI[1] == WinnerNumbers[0])
+                    || (ValuesToPresentI[1] == WinnerNumbers[1])
+                    || (ValuesToPresentI[1] == WinnerNumbers[2])
+                    || (ValuesToPresentI[1] == WinnerNumbers[3])
+                    || (ValuesToPresentI[1] == WinnerNumbers[4])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleI3()->Bool{
+                var New = Int.random(in: 16..<31)
+                ValuesToPresentI[3] = New
+                if ((ValuesToPresentI[3] == WinnerNumbers[0])
+                    || (ValuesToPresentI[3] == WinnerNumbers[1])
+                    || (ValuesToPresentI[3] == WinnerNumbers[2])
+                    || (ValuesToPresentI[3] == WinnerNumbers[3])
+                    || (ValuesToPresentI[3] == WinnerNumbers[4])
+                    || (ValuesToPresentI[1] == ValuesToPresentI[3])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            
+            
+            func testDoubleN1()->Bool{
+                var New = Int.random(in: 31..<46)
+                ValuesToPresentN[1] = New
+                if ((ValuesToPresentN[1] == WinnerNumbers[0])
+                    || (ValuesToPresentN[1] == WinnerNumbers[1])
+                    || (ValuesToPresentN[1] == WinnerNumbers[2])
+                    || (ValuesToPresentN[1] == WinnerNumbers[3])
+                    || (ValuesToPresentN[1] == WinnerNumbers[4])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleN3()->Bool{
+                var New = Int.random(in: 31..<46)
+                ValuesToPresentN[3] = New
+                if ((ValuesToPresentN[3] == WinnerNumbers[0])
+                    || (ValuesToPresentN[3] == WinnerNumbers[1])
+                    || (ValuesToPresentN[3] == WinnerNumbers[2])
+                    || (ValuesToPresentN[3] == WinnerNumbers[3])
+                    || (ValuesToPresentN[3] == WinnerNumbers[4])
+                    || (ValuesToPresentN[1] == ValuesToPresentN[3])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleG1()->Bool{
+                var New = Int.random(in: 46..<61)
+                ValuesToPresentG[1] = New
+                if ((ValuesToPresentG[1] == WinnerNumbers[0])
+                    || (ValuesToPresentG[1] == WinnerNumbers[1])
+                    || (ValuesToPresentG[1] == WinnerNumbers[2])
+                    || (ValuesToPresentG[1] == WinnerNumbers[3])
+                    || (ValuesToPresentG[1] == WinnerNumbers[4])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleG3()->Bool{
+                var New = Int.random(in: 46..<61)
+                ValuesToPresentG[3] = New
+                if ((ValuesToPresentG[3] == WinnerNumbers[0])
+                    || (ValuesToPresentG[3] == WinnerNumbers[1])
+                    || (ValuesToPresentG[3] == WinnerNumbers[2])
+                    || (ValuesToPresentG[3] == WinnerNumbers[3])
+                    || (ValuesToPresentG[3] == WinnerNumbers[4])
+                    || (ValuesToPresentG[1] == ValuesToPresentG[3])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleO1()->Bool{
+                var New = Int.random(in: 61..<76)
+                ValuesToPresentO[1] = New
+                if ((ValuesToPresentO[1] == WinnerNumbers[0])
+                    || (ValuesToPresentO[1] == WinnerNumbers[1])
+                    || (ValuesToPresentO[1] == WinnerNumbers[2])
+                    || (ValuesToPresentO[1] == WinnerNumbers[3])
+                    || (ValuesToPresentO[1] == WinnerNumbers[4])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+            func testDoubleO3()->Bool{
+                var New = Int.random(in: 61..<76)
+                ValuesToPresentO[3] = New
+                if ((ValuesToPresentO[3] == WinnerNumbers[0])
+                    || (ValuesToPresentO[3] == WinnerNumbers[1])
+                    || (ValuesToPresentO[3] == WinnerNumbers[2])
+                    || (ValuesToPresentO[3] == WinnerNumbers[3])
+                    || (ValuesToPresentO[3] == WinnerNumbers[4])
+                    || (ValuesToPresentO[1] == ValuesToPresentO[3])){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+            
+    func GetWinnerNumbersOld(){
         var HowMany = 0
         // rows
            if (WhereToPutIt < 16){
@@ -1140,7 +1890,7 @@ class VCBingo: UIViewController {
     
     // I have produced the b-values to present but I wanted a winner at position 11 or 12. To do that,
     // I put the winning numbers at position 0,2,4,5,6. position 1 and 3 must nor contain a winner number
-    func testDoubleB1()->Bool{
+    func testDoubleB1Old()->Bool{
         var New = Int.random(in: 1..<16)
         ValuesToPresentB[1] = New
         if ((ValuesToPresentB[1] == WinnerNumbers[0])
@@ -1155,7 +1905,7 @@ class VCBingo: UIViewController {
         }
     }
     // kanske att 1 och 3 har möjlighet att få samma värde ??
-    func testDoubleB3()->Bool{
+    func testDoubleB3Old()->Bool{
         var New = Int.random(in: 1..<16)
         ValuesToPresentB[3] = New
         if ((ValuesToPresentB[3] == WinnerNumbers[0])
@@ -1170,7 +1920,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleI1()->Bool{
+    func testDoubleI1Old()->Bool{
         var New = Int.random(in: 16..<31)
         ValuesToPresentI[1] = New
         if ((ValuesToPresentI[1] == WinnerNumbers[0])
@@ -1185,7 +1935,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleI3()->Bool{
+    func testDoubleI3Old()->Bool{
         var New = Int.random(in: 16..<31)
         ValuesToPresentI[3] = New
         if ((ValuesToPresentI[3] == WinnerNumbers[0])
@@ -1202,7 +1952,7 @@ class VCBingo: UIViewController {
     
     
     
-    func testDoubleN1()->Bool{
+    func testDoubleN1Old()->Bool{
         var New = Int.random(in: 31..<46)
         ValuesToPresentN[1] = New
         if ((ValuesToPresentN[1] == WinnerNumbers[0])
@@ -1217,7 +1967,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleN3()->Bool{
+    func testDoubleN3Old()->Bool{
         var New = Int.random(in: 31..<46)
         ValuesToPresentN[3] = New
         if ((ValuesToPresentN[3] == WinnerNumbers[0])
@@ -1232,7 +1982,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleG1()->Bool{
+    func testDoubleG1Old()->Bool{
         var New = Int.random(in: 46..<61)
         ValuesToPresentG[1] = New
         if ((ValuesToPresentG[1] == WinnerNumbers[0])
@@ -1247,7 +1997,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleG3()->Bool{
+    func testDoubleG3Old()->Bool{
         var New = Int.random(in: 46..<61)
         ValuesToPresentG[3] = New
         if ((ValuesToPresentG[3] == WinnerNumbers[0])
@@ -1262,7 +2012,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleO1()->Bool{
+    func testDoubleO1Old()->Bool{
         var New = Int.random(in: 61..<76)
         ValuesToPresentO[1] = New
         if ((ValuesToPresentO[1] == WinnerNumbers[0])
@@ -1277,7 +2027,7 @@ class VCBingo: UIViewController {
         }
     }
     
-    func testDoubleO3()->Bool{
+    func testDoubleO3Old()->Bool{
         var New = Int.random(in: 61..<76)
         ValuesToPresentO[3] = New
         if ((ValuesToPresentO[3] == WinnerNumbers[0])
@@ -2135,6 +2885,10 @@ class VCBingo: UIViewController {
  
     }
     
+    
+    
+ 
+    
     func checkIfWeShouldErase(){
         self.ref.child("BingoName").getData(completion:{ [self]error, snapshot in
                 guard error == nil else
@@ -2183,18 +2937,26 @@ class VCBingo: UIViewController {
                             let TodayDayInt = (Day as NSString).intValue
                             
                             var erase = false
-                            if (TodayYearInt > ReadYearInt){
+                         /*   if (TodayYearInt > ReadYearInt){
                                 print("a")
                                 erase = true
                             }
                             if (TodayMonthInt > ReadMonthInt){
                                 print("b")
                                 erase = true
-                            }
-                            if (TodayDayInt > ReadDayInt){
+                            }*/
+                            
+                            // wait mopre than 24*2 h before erase
+                            if (TodayDayInt > (ReadDayInt+2)){
                                 print("c")
                                 erase = true
                             }
+                            // If saved day is 31, wait until day 3 until erase
+                            if ((TodayDayInt < ReadDayInt) && (TodayDayInt > 2)){
+                                print("c")
+                                erase = true
+                            }
+                            
                             
                             if (erase){
                                 removeFromFirebase(child1: "BingoName", child2: ChildByAutoErase)

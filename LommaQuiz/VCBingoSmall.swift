@@ -145,6 +145,7 @@ class VCBingoSmall: UIViewController, UICollectionViewDelegate, UICollectionView
                 self.NextButton.backgroundColor = .red
                 // OBS! När du trycker NÄSTA så försvinner ditt bevis på att du vann.
                 proofOfWinnerAlert.text = "OBS! När du trycker NÄSTA så försvinner ditt bevis på att du vann."
+                winnerTextMain = true
             }else{
                 waitToTheLastToShowLooser = true
      //           self.winnerTV.text = "Deltagare " + theWinner + " har fått BINGO"

@@ -15,6 +15,8 @@ class VCListSpecialWalk: UIViewController, UITableViewDelegate, UITableViewDataS
     @IBOutlet weak var doesSpecialWalkExist: UITextField!
     @IBOutlet weak var ListOfSpecialWalks: UITableView!
     
+    @IBOutlet weak var SeeWalkButton: UIButton!
+    
     var quiznamelist = [String]()
     var quizUserlist = [String]()
     var ownWalkExist = false
@@ -29,12 +31,33 @@ class VCListSpecialWalk: UIViewController, UITableViewDelegate, UITableViewDataS
         ref = Database.database().reference()
         loadQuizNames()
         
+        SeeWalkButton.isHidden = true
+        
         specialWalkName.text = ""
         doesSpecialWalkExist.text = ""
 
         // Do any additional setup after loading the view.
     }
     
+    
+    @IBAction func walk(_ sender: Any) {
+    /*    if (VCLogin().isRundacLoggedIn()){
+            
+        }else{*/
+   
+                performSegue(withIdentifier: "showWalks3", sender: 6)
+  
+ //       }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+ 
+        if (segue.identifier == "showWalks3"){
+            let dest = segue.destination as! VCShowWalk2
+            dest.walkNumber = sender as! Int
+            
+        }
+    }
     
     @IBAction func beginWritingName(_ sender: UITextField) {
         ownWalkExist = false
@@ -109,6 +132,7 @@ class VCListSpecialWalk: UIViewController, UITableViewDelegate, UITableViewDataS
                                 VCGPSMap().GetCoords(WalkNumberIn: specialWalkName.text!)
                                 chosenWalkGlobal = 0
                                 ownWalk2 = specialWalkName.text!
+                                SeeWalkButton.isHidden = false
                             }
         
                             if (!ownWalkExist){
@@ -158,6 +182,7 @@ class VCListSpecialWalk: UIViewController, UITableViewDelegate, UITableViewDataS
         self.doesSpecialWalkExist.text = "Rundan finns och är nu vald"
         VCGPSMap().GetCoords(WalkNumberIn: specialWalkName.text!)
         chosenWalkGlobal = 0
+        SeeWalkButton.isHidden = false
     }
 
 }

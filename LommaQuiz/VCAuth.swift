@@ -56,6 +56,11 @@ class VCAuth: UIViewController {
     
     
     @IBAction func createWalkButton(_ sender: Any) {
+        // once, the button for choosing walk was gone, I better put this below
+        takeAwayButtonToChooseRunda = false
+        loggedInToWalkSombodysSpecial = false
+        questUserBingo = ""
+        
         forceWalkCreate(email: "rundac@icloud.com", password: "rundac")
         self.showStatusTV.text = "Inloggad. Tryck Back och Back och välj VÄLJ PROMENAD OCH välj SKAPA RUNDA"
     }

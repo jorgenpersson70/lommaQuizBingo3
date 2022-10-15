@@ -12,6 +12,9 @@ import Firebase
 class VCShowWalk2: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var shownWalk: MKMapView!
+    
+    @IBOutlet weak var ChoseThisWalkButton: UIButton!
+    
     var longitudeHere = [Double]()
     var latitudeHere = [Double]()
     var walkNumber : Int = 0
@@ -24,8 +27,14 @@ class VCShowWalk2: UIViewController, MKMapViewDelegate {
  
     override func viewDidLoad() {
         super.viewDidLoad()
-        // not really correct to talk the choice away here
-        ownWalk2 = ""
+        
+        // if see walk comes from chosing from list, then tha walknumber is 6 and ownWalk2 has a name
+        if (walkNumber != 6){
+            ownWalk2 = ""
+        }else{
+            ChoseThisWalkButton.isHidden = true
+        }
+        
         view.addSubview(shownWalk)
         shownWalk.frame = view.bounds
   

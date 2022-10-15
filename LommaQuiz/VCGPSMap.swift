@@ -11,6 +11,8 @@ import AVFoundation
 import Firebase
 import Lottie
 
+
+
 var QuestFound : [Bool] = [false,false,false,false,false,false,false,false,false,false,false,false]
 var useCheatCoordinates : Bool = false
 var saveLongitude : Double = 0.0
@@ -94,6 +96,10 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
             mapView.delegate = self
         }
         
+        if (forDebugAtMac){
+            updateCounting()
+        }
+        
     }
  
     func checkIfTestSimulator() {
@@ -128,11 +134,18 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
                         }
      
                         print(LoginInfo)
-                        if ((LoginInfo == "Yes") && (loggedInHighest)){
+                        if (forDebugAtMac){
                             useCheatCoordinates = true
                             self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
                                 self.updateCounting()
                             })
+                        }else{
+                            if ((LoginInfo == "Yes") && (loggedInHighest)){
+                                useCheatCoordinates = true
+                                self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
+                                    self.updateCounting()
+                                })
+                            }
                         }
                         
                     }
@@ -420,7 +433,18 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
         manager.stopUpdatingLocation()
         self.timer.invalidate()
         
-        performSegue(withIdentifier: "showQuestion", sender: 99)
+        if (quizname == "Bingo"){
+            takeAwayButtonToChooseRunda = false
+            questUserBingo = ""
+            BingoName = ""
+            waitToTheLastToShowLooser = false
+            WinnerIs = ""
+            // testa
+            VCAuth().forceLogout()
+            performSegue(withIdentifier: "toStartMenu2", sender: 1)
+        }else{
+            performSegue(withIdentifier: "showQuestion", sender: 99)
+        }
     }
 
     func GoToQuestion(questionNumber:Int) {
@@ -444,71 +468,75 @@ class VCGPSMap: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
      
             dest.questionnumberInt = sender as! Int
         }else{
-            if (segue.identifier == "gotoBingoSmall"){
-                let dest = segue.destination as! VCBingoSmall
-                var BingoPosInt = sender as! Int
-                
-                var ValuePos = 0
-                
-                BingoPosInt -= 1
-                
-                ValuePos = BingoPosInt * 3
-                
-                dest.ValuesToEvaluateB = ValuesToPresentBRead
-                dest.ValuesToEvaluateI = ValuesToPresentIRead
-                dest.ValuesToEvaluateN = ValuesToPresentNRead
-                dest.ValuesToEvaluateG = ValuesToPresentGRead
-                dest.ValuesToEvaluateO = ValuesToPresentORead
-                
-                dest.ValueToPopUp1 = ValuesToPopUp[ValuePos]
-                dest.ValueToPopUp2 = ValuesToPopUp[ValuePos+1]
-                if (ValuePos == 33){
-                    dest.ValueToPopUp3 = 0
-                }else{
-                    dest.ValueToPopUp3 = ValuesToPopUp[ValuePos+2]
+            if (segue.identifier == "toStartMenu2"){
+                let dest = segue.destination as! ViewController
+            }else{
+                if (segue.identifier == "gotoBingoSmall"){
+                    let dest = segue.destination as! VCBingoSmall
+                    var BingoPosInt = sender as! Int
+                    
+                    var ValuePos = 0
+                    
+                    BingoPosInt -= 1
+                    
+                    ValuePos = BingoPosInt * 3
+                    
+                    dest.ValuesToEvaluateB = ValuesToPresentBRead
+                    dest.ValuesToEvaluateI = ValuesToPresentIRead
+                    dest.ValuesToEvaluateN = ValuesToPresentNRead
+                    dest.ValuesToEvaluateG = ValuesToPresentGRead
+                    dest.ValuesToEvaluateO = ValuesToPresentORead
+                    
+                    dest.ValueToPopUp1 = ValuesToPopUp[ValuePos]
+                    dest.ValueToPopUp2 = ValuesToPopUp[ValuePos+1]
+                    if (ValuePos == 33){
+                        dest.ValueToPopUp3 = 0
+                    }else{
+                        dest.ValueToPopUp3 = ValuesToPopUp[ValuePos+2]
+                    }
+                    
+                    dest.BValues = BValuesRead
+                    dest.IValues = IValuesRead
+                    dest.NValues = NValuesRead
+                    dest.GValues = GValuesRead
+                    dest.OValues = OValuesRead
+                    
+                    dest.quizname = quizname
+                    dest.questionnumberInt = sender as! Int
                 }
-                
-                dest.BValues = BValuesRead
-                dest.IValues = IValuesRead
-                dest.NValues = NValuesRead
-                dest.GValues = GValuesRead
-                dest.OValues = OValuesRead
-                
-                dest.quizname = quizname
-                dest.questionnumberInt = sender as! Int
-            }
-            else{
-                let dest = segue.destination as! VCSeeBingoPlayerRun
-                var BingoPosInt = sender as! Int
-                
-                var ValuePos = 0
-                
-                BingoPosInt -= 1
-                
-                ValuePos = BingoPosInt * 3
-                
-                dest.ValuesToEvaluateB = ValuesToPresentBRead
-                dest.ValuesToEvaluateI = ValuesToPresentIRead
-                dest.ValuesToEvaluateN = ValuesToPresentNRead
-                dest.ValuesToEvaluateG = ValuesToPresentGRead
-                dest.ValuesToEvaluateO = ValuesToPresentORead
-                
-                dest.ValueToPopUp1 = ValuesToPopUp[ValuePos]
-                dest.ValueToPopUp2 = ValuesToPopUp[ValuePos+1]
-                if (ValuePos == 33){
-                    dest.ValueToPopUp3 = 0
-                }else{
-                    dest.ValueToPopUp3 = ValuesToPopUp[ValuePos+2]
+                else{
+                    let dest = segue.destination as! VCSeeBingoPlayerRun
+                    var BingoPosInt = sender as! Int
+                    
+                    var ValuePos = 0
+                    
+                    BingoPosInt -= 1
+                    
+                    ValuePos = BingoPosInt * 3
+                    
+                    dest.ValuesToEvaluateB = ValuesToPresentBRead
+                    dest.ValuesToEvaluateI = ValuesToPresentIRead
+                    dest.ValuesToEvaluateN = ValuesToPresentNRead
+                    dest.ValuesToEvaluateG = ValuesToPresentGRead
+                    dest.ValuesToEvaluateO = ValuesToPresentORead
+                    
+                    dest.ValueToPopUp1 = ValuesToPopUp[ValuePos]
+                    dest.ValueToPopUp2 = ValuesToPopUp[ValuePos+1]
+                    if (ValuePos == 33){
+                        dest.ValueToPopUp3 = 0
+                    }else{
+                        dest.ValueToPopUp3 = ValuesToPopUp[ValuePos+2]
+                    }
+                    
+                    dest.BValues = BValuesRead
+                    dest.IValues = IValuesRead
+                    dest.NValues = NValuesRead
+                    dest.GValues = GValuesRead
+                    dest.OValues = OValuesRead
+                    
+                    dest.quizname = quizname
+                    dest.questionnumberInt = sender as! Int
                 }
-                
-                dest.BValues = BValuesRead
-                dest.IValues = IValuesRead
-                dest.NValues = NValuesRead
-                dest.GValues = GValuesRead
-                dest.OValues = OValuesRead
-                
-                dest.quizname = quizname
-                dest.questionnumberInt = sender as! Int
             }
         }
         

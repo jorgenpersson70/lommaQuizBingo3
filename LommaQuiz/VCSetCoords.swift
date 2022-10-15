@@ -9,6 +9,8 @@ import CoreLocation
 import MapKit
 import Firebase
 
+var NameExists = false
+
 class VCSetCoords: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
 //    @IBOutlet weak var quizWalkNumber: UILabel!
     @IBOutlet weak var saveCoordinates: UIButton!
@@ -17,6 +19,9 @@ class VCSetCoords: UIViewController, CLLocationManagerDelegate, UITextFieldDeleg
     @IBOutlet weak var mapView: MKMapView!
     
     @IBOutlet weak var nameOfWalk: UITextField!
+    
+    @IBOutlet weak var alertText: UILabel!
+    
     
     var QuestCoordLongitude : [Double] = [13.076251074659215,13.076603173915528,13.07686334818293,13.077120840246137,13.077356874635825,13.07767337530735,13.074486910948394,13.074299156312744,13.07408457958629,13.07498580183741,13.075833379906916,13.07599967686992]
     
@@ -41,6 +46,7 @@ class VCSetCoords: UIViewController, CLLocationManagerDelegate, UITextFieldDeleg
 //        self.nameOfWalk.delegate = self
         
         nameOfWalk.text = ""
+        alertText.isHidden = true
         
         if (VCLogin().isRundacLoggedIn()){
             nameOfWalk.isHidden = false
@@ -48,6 +54,8 @@ class VCSetCoords: UIViewController, CLLocationManagerDelegate, UITextFieldDeleg
             nameOfWalk.isHidden = true
         }
  
+        // vad blir det för namn, vi har ju inte skrivit något ännu
+        
         checkIfWalkExists() // If not exist, den make an empty save.
 //        quizWalkNumber.text = "RUNDA " + String(walkNumber)
         quizWalkName += String(walkNumber)
@@ -142,25 +150,125 @@ class VCSetCoords: UIViewController, CLLocationManagerDelegate, UITextFieldDeleg
     }
     
     @IBAction func saveCoordinates(_ sender: Any) {
+        
         saveCoordinates.backgroundColor = .systemGray3
         timeForButtonGrey = 0
         if (VCLogin().isRundacLoggedIn()){
             if (nameOfWalk.text != ""){
-                if (questionPosition < 13){
-                    SaveCoords()
-                }
+                if (nameOfWalk.text!.count > 15){
+                          alertText.isHidden = false
+                          alertText.text = "Namn, högst 15 tecken"
+                      }else{
+                           // check if the name exists
+                            if (questionPosition == 1){
+                                ref.child("QuizWalks").child("maps").child(nameOfWalk.text!).getData(completion:{ [self]error, snapshot in
+                                        guard error == nil else
+                                        {
+                                            print(error!.localizedDescription) // När jag inte har datum så trodde jag att vi skulle hamna här.
+                                            return;
+                                        }
+                                         print(snapshot)
+                                        if (snapshot != nil)
+                                            {
+                                            
+                                            // var det så med iphone att om den inte hittar så tar den allt under maps ?
+                                            // Men vad var det igår, idag har jag inte problem
+                                            
+                                                NameExists = false
+                                                for QuizWalkMapChild in snapshot.children
+                                                {
+                                                    print(QuizWalkMapChild)
+                                                    alertText.isHidden = false
+                                                    alertText.text = "Namnet finns redan"
+                                                    NameExists = true
+                                                }
+                                                if (!NameExists){
+                                                    alertText.isHidden = true
+                                                    alertText.text = ""
+                                                    
+                                                    if (questionPosition < 13){
+                                                        SaveCoords()
+                                                    }
+                                                    
+                                                    if (questionPosition == 12){
+                                                        saveCoordinates.backgroundColor = .green
+                                                        timerButton.invalidate()
+                                                        saveCoordinateText.text = "KLAR. TRYCK Back."
+                                                    }
+                                                    
+                                                    if (questionPosition < 12){
+                                                        questionPosition += 1
+                                                   //     quizPosNumber.text = "KOORDINAT " + String(questionPosition)
+                                                        quizPosNumber.text = "GÅ TILL KOORDINAT " + String(questionPosition) + ", SPARA"
+                                                    }
+                                                }
+                            
+                                        /*        if (walkExists){
+                                                    
+                                                   
+                                                }
+                                                else{
+                                                    self.doesOwnWalkExist.text = "Rundan finns inte"
+                                                    ownWalkExist = true
+                                                }*/
+                                        }
+                                        else
+                                        {
+                                            print("snapshot == nil")
+                                        }
+                                }) // BingoConnectRunda.text
+                            }else{
+                                alertText.isHidden = true
+                                alertText.text = ""
+                                
+                                if (questionPosition < 13){
+                                    SaveCoords()
+                                }
+                                
+                                if (questionPosition == 12){
+                                    saveCoordinates.backgroundColor = .green
+                                    timerButton.invalidate()
+                                    saveCoordinateText.text = "KLAR. TRYCK Back."
+                                }
+                                
+                                if (questionPosition < 12){
+                                    questionPosition += 1
+                               //     quizPosNumber.text = "KOORDINAT " + String(questionPosition)
+                                    quizPosNumber.text = "GÅ TILL KOORDINAT " + String(questionPosition) + ", SPARA"
+                                }
+                                
+                            }
+                      }
+    
                 
-                if (questionPosition == 12){
-                    saveCoordinates.backgroundColor = .green
-                    timerButton.invalidate()
-                    saveCoordinateText.text = "KLAR. TRYCK Back."
-                }
                 
-                if (questionPosition < 12){
-                    questionPosition += 1
-               //     quizPosNumber.text = "KOORDINAT " + String(questionPosition)
-                    quizPosNumber.text = "GÅ TILL KOORDINAT " + String(questionPosition) + ", SPARA"
-                }
+          /*      if (nameOfWalk.text!.count > 15){
+                    alertText.isHidden = false
+                    alertText.text = "Namn, högst 15 tecken"
+                }else{
+                
+                    alertText.isHidden = true
+                    alertText.text = ""
+                    
+                    if (questionPosition < 13){
+                        SaveCoords()
+                    }
+                    
+                    if (questionPosition == 12){
+                        saveCoordinates.backgroundColor = .green
+                        timerButton.invalidate()
+                        saveCoordinateText.text = "KLAR. TRYCK Back."
+                    }
+                    
+                    if (questionPosition < 12){
+                        questionPosition += 1
+                   //     quizPosNumber.text = "KOORDINAT " + String(questionPosition)
+                        quizPosNumber.text = "GÅ TILL KOORDINAT " + String(questionPosition) + ", SPARA"
+                    }
+                }*/
+            }else{
+                alertText.isHidden = false
+                alertText.text = "Skriv namn på rundan här ovan"
             }
             
         }else{
@@ -215,7 +323,7 @@ class VCSetCoords: UIViewController, CLLocationManagerDelegate, UITextFieldDeleg
     @IBAction func endOfWritingName(_ sender: UITextField) {
        // nameOfWalk.resignFirstResponder()
         self.view.endEditing(true)
-        CreateEmptySave()
+  // testar      CreateEmptySave()
     }
     
     
