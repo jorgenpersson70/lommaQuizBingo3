@@ -100,7 +100,10 @@ class VCLogin: UIViewController {
     @IBOutlet weak var writtenPassword: UITextField!
     
     @IBOutlet weak var writtenPasswordBingo: UITextField!
-    @IBOutlet weak var showIfLoginLogout: UITextField!
+//    @IBOutlet weak var showIfLoginLogout: UITextField!
+    
+    @IBOutlet weak var showIfLoginLogoutTV: UITextView!
+    
     @IBOutlet weak var questionCreator: UITextField!
     @IBOutlet weak var questionUser: UITextField!
     @IBOutlet weak var saveNewQuestionWriter: UIButton!
@@ -126,14 +129,14 @@ class VCLogin: UIViewController {
         makeInvisable()
         
         
-        showIfLoginLogout.text = "Du är inte inloggad"
+        showIfLoginLogoutTV.text = "Du är inte inloggad"
         if (loggedInToWalkSombodysSpecial){
-            showIfLoginLogout.text = "Du är inloggad på rundan"
+            showIfLoginLogoutTV.text = "Du är inloggad på rundan"
         }
         if (loggedInToWrite){
             if (loggedInHighest){
                 makeVisibleHigh()
-                showIfLoginLogout.text = "Du är inloggad med skrivrättighet"
+                showIfLoginLogoutTV.text = "Du är inloggad med skrivrättighet"
             }
             else{
                 logOut("")
@@ -193,7 +196,7 @@ class VCLogin: UIViewController {
     
     func makeVisibleHigh(){
         loggedInToWrite = true
-        showIfLoginLogout.text = "Du är inloggad"
+        showIfLoginLogoutTV.text = "Du är inloggad"
         questionCreator.isEnabled = true
         questionUser.isEnabled = true
         questionCreator.alpha = 1
@@ -249,7 +252,7 @@ class VCLogin: UIViewController {
                             
                                 // check if maximum participants have been reached
                                 if (countExpected == countLoggedIn){
-                                    showIfLoginLogout.text = "Max antal deltagare har redan loggat in"
+                                    showIfLoginLogoutTV.text = "Max antal deltagare har redan loggat in"
                                     // här får inte stå return false, vet ej varför
                                     return;
                                 }
@@ -328,7 +331,7 @@ class VCLogin: UIViewController {
                                                 youAreplayer += 1
                                                 
                                                 // sätt maxlängd på sträng
-                                                showIfLoginLogout.text = "Du är inloggad på " + BingoName + " som deltagare nr " + String(youAreplayer)
+                                                showIfLoginLogoutTV.text = "Du är inloggad på " + BingoName + " som deltagare nr " + String(youAreplayer)
                                                 // from VCBingoSmall, I think I have to reset it to be sure
                                                 waitToTheLastToShowLooser = false
                                                 WinnerIs = ""
@@ -349,7 +352,7 @@ class VCLogin: UIViewController {
                                                 
                                                 self.ref.child("BingoName").child(ChildByAuto).child("PersonsLoggedIn").setValue(String(youAreplayer)) { (error, ref) in
                                                         if error != nil {
-                                                            showIfLoginLogout.text = "Fel vid skrivning till databas"
+                                                            showIfLoginLogoutTV.text = "Fel vid skrivning till databas"
                                                             youAreplayer -= 1
                                                             foundBingoPassword = false
                                                             BingoName = ""
@@ -520,12 +523,12 @@ class VCLogin: UIViewController {
                 
                 if (isItHighestPriority && (!masterLoggedIn)){
                     isItHighestPriority = false
-                    showIfLoginLogout.text = "Logga in för skrivrättighet"
+                    showIfLoginLogoutTV.text = "Logga in för skrivrättighet"
                 }
                 
                 if (loggedInToWrite && (!authPassedForUser)){
                     loggedInToWrite = false
-                    showIfLoginLogout.text = "Logga in för skrivrättighet"
+                    showIfLoginLogoutTV.text = "Logga in för skrivrättighet"
                 }
                 
                 // Only to make the keyboard disappear
@@ -542,7 +545,7 @@ class VCLogin: UIViewController {
             // om man kommer åter så bör jag ta hand om detta
             if (login){
                 if (loggedInToWrite){
-                    showIfLoginLogout.text = "Du är inloggad med skrivrättighet"
+                    showIfLoginLogoutTV.text = "Du är inloggad med skrivrättighet"
                     questUser = quizUserList[foundSomeoneToLogin]
                     questCreator = quizCreatorList[foundSomeoneToLogin]
                     if (!isItHighestPriority){
@@ -552,7 +555,7 @@ class VCLogin: UIViewController {
                     }
                 }
                 else{
-                    showIfLoginLogout.text = "Du är inloggad utan skrivrättighet"
+                    showIfLoginLogoutTV.text = "Du är inloggad utan skrivrättighet"
                     questUser = quizUserList[foundSomeoneToLogin]
                     loggedInToWalkSombodysSpecial = true
                 }
@@ -564,7 +567,7 @@ class VCLogin: UIViewController {
     
     @IBAction func logOut(_ sender: Any) {
         loggedInToWrite = false
-        showIfLoginLogout.text = "Du är inte inloggad"
+        showIfLoginLogoutTV.text = "Du är inte inloggad"
         writtenPassword.text = ""
         makeInvisable()
         questUser = ""
